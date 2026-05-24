@@ -1,19 +1,52 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 
+# =========================
+# Install Node.js
+# =========================
+- task: NodeTool@0
+  inputs:
+    versionSpec: '18.x'
+  displayName: 'Install Node.js'
+
+# =========================
+# Build Angular Frontend
+# =========================
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    cd frontend/wms-frontend
+    npm install
+    npm run build
+  displayName: 'Build Angular Frontend'
+
+# =========================
+# Install .NET SDK
+# =========================
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
+  displayName: 'Install .NET SDK'
+
+# =========================
+# Restore Backend Dependencies
+# =========================
+- script: |
+    cd backend
+    dotnet restore
+  displayName: 'Restore .NET Dependencies'
+
+# =========================
+# Build Backend
+# =========================
+- script: |
+    cd backend
+    dotnet build --configuration $(buildConfiguration)
+  displayName: 'Build .NET Backend'
