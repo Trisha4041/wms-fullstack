@@ -14,7 +14,7 @@ steps:
 
 # Build Angular Frontend
 - script: |
-    cd frontend
+    cd frontend/wms-frontend
     npm install
     npm run build
   displayName: 'Build Angular Frontend'
@@ -26,13 +26,13 @@ steps:
     version: '8.0.x'
   displayName: 'Install .NET SDK'
 
-# Restore backend dependencies
+# Restore Backend Dependencies
 - script: |
     cd backend
     dotnet restore
   displayName: 'Restore .NET Dependencies'
 
-# Build backend
+# Build Backend
 - script: |
     cd backend
     dotnet build --configuration Release
