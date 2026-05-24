@@ -1,0 +1,179 @@
+<div class="min-h-screen bg-gray-100 p-6">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <button (click)="goBack()" class="text-blue-600 text-sm mb-1 hover:underline">← Back to Dashboard</button>
+        <h2 class="text-2xl font-bold text-gray-800">Employees</h2>
+      </div>
+      <button (click)="showForm = !showForm; resetForm(); successInfo = null"
+        class="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800">
+        + Add Employee
+      </button>
+    </div>
+
+    <!-- Success Info Card -->
+    <div *ngIf="successInfo" class="bg-green-50 border border-green-200 rounded-xl p-5 mb-6">
+      <h3 class="font-semibold text-green-700 mb-2">✅ Employee Added Successfully!</h3>
+      <p class="text-sm text-green-600 mb-3">Share these login credentials with <strong>{{ successInfo.name }}</strong>:</p>
+      <div class="bg-white rounded-lg p-4 border border-green-200">
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <p class="text-gray-500 text-xs">Username</p>
+            <p class="font-mono font-semibold text-gray-800">{{ successInfo.username }}</p>
+          </div>
+          <div>
+            <p class="text-gray-500 text-xs">Default Password</p>
+            <p class="font-mono font-semibold text-gray-800">{{ successInfo.password }}</p>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">Employee can login at localhost:4200 with these credentials</p>
+      <button (click)="successInfo = null" class="mt-3 text-xs text-green-600 hover:underline">Dismiss</button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="bg-white rounded-xl shadow p-4 mb-6">
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Search by Name</label>
+          <input [(ngModel)]="searchName" (ngModelChange)="search()" placeholder="Enter name..."
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Filter by Department</label>
+          <select [(ngModel)]="searchDepartment" (ngModelChange)="search()"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="0">All Departments</option>
+            <option *ngFor="let d of departments" [value]="d.departmentId">{{ d.departmentName }}</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button (click)="clearSearch()"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 w-full">
+            Clear Search
+          </button>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">Showing {{ filteredEmployees.length }} of {{ employees.length }} employees</p>
+    </div>
+
+    <!-- Add Form -->
+    <div *ngIf="showForm" class="bg-white rounded-xl shadow p-6 mb-6">
+      <h3 class="font-semibold text-gray-700 mb-4">New Employee</h3>
+      <div *ngIf="errorMessage" class="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{{ errorMessage }}</div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">First Name *</label>
+          <input [(ngModel)]="newEmployee.firstName" placeholder="Enter first name"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Last Name</label>
+          <input [(ngModel)]="newEmployee.lastName" placeholder="Enter last name"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Email *</label>
+          <input [(ngModel)]="newEmployee.email" placeholder="Enter email" type="email"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Phone Number</label>
+          <input [(ngModel)]="newEmployee.phoneNumber" placeholder="Enter phone number"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Gender</label>
+          <select [(ngModel)]="newEmployee.gender"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select Gender</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="O">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Department *</label>
+          <select [(ngModel)]="newEmployee.departmentId"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="0">Select Department</option>
+            <option *ngFor="let d of departments" [value]="d.departmentId">{{ d.departmentName }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Role *</label>
+          <select [(ngModel)]="newEmployee.roleId"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="1">Admin</option>
+            <option value="2">Manager</option>
+            <option value="3">Employee</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Date of Birth *</label>
+          <input [(ngModel)]="newEmployee.dob" type="date"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Date of Joining *</label>
+          <input [(ngModel)]="newEmployee.doj" type="date"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-4">
+        <button (click)="createEmployee()"
+          class="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800">Save</button>
+        <button (click)="showForm = false; resetForm()"
+          class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <div *ngIf="isLoading" class="p-8 text-center text-gray-400">Loading employees...</div>
+      <div *ngIf="hasError && !isLoading" class="p-8 text-center">
+        <div class="text-red-400 text-sm mb-3">Failed to load employees</div>
+        <button (click)="loadEmployees()" class="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">Retry</button>
+      </div>
+      <table *ngIf="!isLoading && !hasError" class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3 text-left">ID</th>
+            <th class="px-4 py-3 text-left">Name</th>
+            <th class="px-4 py-3 text-left">Email</th>
+            <th class="px-4 py-3 text-left">Phone</th>
+            <th class="px-4 py-3 text-left">Department</th>
+            <th class="px-4 py-3 text-left">Role</th>
+            <th class="px-4 py-3 text-left">Status</th>
+            <th class="px-4 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emp of filteredEmployees" class="border-t hover:bg-gray-50">
+            <td class="px-4 py-3 font-medium text-blue-600">{{ emp.employeeId }}</td>
+            <td class="px-4 py-3 font-medium">{{ emp.firstName }} {{ emp.lastName }}</td>
+            <td class="px-4 py-3 text-gray-500">{{ emp.email }}</td>
+            <td class="px-4 py-3">{{ emp.phoneNumber }}</td>
+            <td class="px-4 py-3">{{ emp.departmentName || '-' }}</td>
+            <td class="px-4 py-3">{{ emp.roleName || '-' }}</td>
+            <td class="px-4 py-3">
+              <span [class]="emp.status === 'Active' ?
+                'bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs' :
+                'bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs'">
+                {{ emp.status }}
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <button (click)="deleteEmployee(emp.employeeId)"
+                class="text-red-500 hover:text-red-700 text-xs">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredEmployees.length === 0">
+            <td colspan="8" class="px-4 py-8 text-center text-gray-400">No employees found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

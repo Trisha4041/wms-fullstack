@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
+    <div class="flex items-center gap-3">
+      <div class="bg-white text-blue-700 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">WMS</div>
+      <span class="font-semibold text-lg">Workforce Management System</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-sm">Welcome, {{ username }} ({{ role }})</span>
+      <button (click)="logout()" class="bg-white text-blue-700 px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-100">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="p-6">
+
+    <!-- Page Title -->
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+      <div class="bg-white rounded-xl shadow p-6 border-l-4 border-blue-500">
+        <p class="text-sm text-gray-500">Total Employees</p>
+        <p class="text-4xl font-bold text-blue-600 mt-2">{{ totalEmployees }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-6 border-l-4 border-green-500">
+        <p class="text-sm text-gray-500">Active Projects</p>
+        <p class="text-4xl font-bold text-green-600 mt-2">{{ totalProjects }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-6 border-l-4 border-yellow-500">
+        <p class="text-sm text-gray-500">Pending Leaves</p>
+        <p class="text-4xl font-bold text-yellow-600 mt-2">{{ pendingLeaves }}</p>
+      </div>
+
+    </div>
+
+    <!-- Quick Navigation -->
+    <h3 class="text-lg font-semibold text-gray-700 mb-4">Quick Access</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+      <a routerLink="/employees" class="bg-white rounded-xl shadow p-5 text-center hover:shadow-md cursor-pointer transition">
+        <div class="text-3xl mb-2">👥</div>
+        <p class="text-sm font-medium text-gray-700">Employees</p>
+      </a>
+
+      <a routerLink="/attendance" class="bg-white rounded-xl shadow p-5 text-center hover:shadow-md cursor-pointer transition">
+        <div class="text-3xl mb-2">📋</div>
+        <p class="text-sm font-medium text-gray-700">Attendance</p>
+      </a>
+
+      <a routerLink="/leaves" class="bg-white rounded-xl shadow p-5 text-center hover:shadow-md cursor-pointer transition">
+        <div class="text-3xl mb-2">📅</div>
+        <p class="text-sm font-medium text-gray-700">Leaves</p>
+      </a>
+
+      <a routerLink="/projects" class="bg-white rounded-xl shadow p-5 text-center hover:shadow-md cursor-pointer transition">
+        <div class="text-3xl mb-2">🗂️</div>
+        <p class="text-sm font-medium text-gray-700">Projects</p>
+      </a>
+
+      <a routerLink="/departments" class="bg-white rounded-xl shadow p-5 text-center hover:shadow-md cursor-pointer transition">
+        <div class="text-3xl mb-2">🏢</div>
+        <p class="text-sm font-medium text-gray-700">Departments</p>
+      </a>
+
+    </div>
+  </div>
+</div>

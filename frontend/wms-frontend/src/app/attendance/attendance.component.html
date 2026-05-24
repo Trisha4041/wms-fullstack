@@ -1,0 +1,76 @@
+<div class="min-h-screen bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto">
+    <button (click)="goBack()" class="text-blue-600 text-sm mb-1 hover:underline">← Back to Dashboard</button>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Attendance</h2>
+
+    <div *ngIf="!hasEmployeeId" class="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-xl mb-6">
+      <p class="font-medium">No Employee Profile Linked</p>
+      <p class="text-sm mt-1">Your account is not linked to an employee profile. Please contact Admin to link your Employee ID.</p>
+    </div>
+
+    <div *ngIf="message" class="bg-blue-50 text-blue-700 p-3 rounded-lg mb-4 text-sm">{{ message }}</div>
+
+    <div *ngIf="hasEmployeeId">
+      <!-- Check In/Out Card -->
+      <div class="bg-white rounded-xl shadow p-6 mb-6">
+        <h3 class="font-semibold text-gray-700 mb-4">Today's Attendance</h3>
+        <div *ngIf="todayAttendance" class="mb-4 text-sm text-gray-600 space-y-1">
+          <p>Check In: <span class="font-medium text-green-600">{{ todayAttendance.checkIn | date:'shortTime' }}</span></p>
+          <p *ngIf="todayAttendance.checkOut">Check Out: <span class="font-medium text-red-600">{{ todayAttendance.checkOut | date:'shortTime' }}</span></p>
+          <p *ngIf="todayAttendance.totalHours">Total Hours: <span class="font-medium text-blue-600">{{ todayAttendance.totalHours | number:'1.1-1' }} hrs</span></p>
+        </div>
+        <div *ngIf="!todayAttendance" class="mb-4 text-sm text-gray-400">Not checked in yet today</div>
+        <div class="flex gap-4 items-center">
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Work Mode</label>
+            <select [(ngModel)]="workMode" class="border rounded-lg px-3 py-2 text-sm">
+              <option value="WFO">WFO</option>
+              <option value="WFH">WFH</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+          </div>
+          <div class="flex gap-3 mt-4">
+            <button (click)="checkIn()" [disabled]="isLoading || !!todayAttendance"
+              class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 disabled:opacity-50">
+              Check In
+            </button>
+            <button (click)="checkOut()" [disabled]="isLoading || !todayAttendance || !!todayAttendance.checkOut"
+              class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 disabled:opacity-50">
+              Check Out
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance History -->
+      <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="px-6 py-4 border-b">
+          <h3 class="font-semibold text-gray-700">Attendance History</h3>
+        </div>
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3 text-left">Date</th>
+              <th class="px-4 py-3 text-left">Check In</th>
+              <th class="px-4 py-3 text-left">Check Out</th>
+              <th class="px-4 py-3 text-left">Hours</th>
+              <th class="px-4 py-3 text-left">Mode</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of attendance" class="border-t hover:bg-gray-50">
+              <td class="px-4 py-3">{{ a.attendanceDate | date:'mediumDate' }}</td>
+              <td class="px-4 py-3 text-green-600">{{ a.checkIn | date:'shortTime' }}</td>
+              <td class="px-4 py-3 text-red-600">{{ a.checkOut ? (a.checkOut | date:'shortTime') : '-' }}</td>
+              <td class="px-4 py-3 font-medium">{{ a.totalHours ? (a.totalHours | number:'1.1-1') + ' hrs' : '-' }}</td>
+              <td class="px-4 py-3">{{ a.workMode }}</td>
+            </tr>
+            <tr *ngIf="attendance.length === 0">
+              <td colspan="5" class="px-4 py-8 text-center text-gray-400">No attendance records</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,128 @@
+<div class="min-h-screen bg-gray-100 p-6">
+  <div class="max-w-5xl mx-auto">
+    <button (click)="goBack()" class="text-blue-600 text-sm mb-1 hover:underline">← Back to Dashboard</button>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Leave Management</h2>
+      <button (click)="showForm = !showForm" class="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800">
+        + Apply Leave
+      </button>
+    </div>
+
+    <div *ngIf="message" class="bg-blue-50 text-blue-700 p-3 rounded-lg mb-4 text-sm">{{ message }}</div>
+
+    <!-- Apply Form -->
+    <div *ngIf="showForm" class="bg-white rounded-xl shadow p-6 mb-6">
+      <h3 class="font-semibold text-gray-700 mb-4">Apply for Leave</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Leave Type *</label>
+          <select [(ngModel)]="newLeave.leaveType"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select Leave Type</option>
+            <option value="Sick">Sick Leave</option>
+            <option value="Casual">Casual Leave</option>
+            <option value="Earned">Earned Leave</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Reason</label>
+          <input [(ngModel)]="newLeave.reason" placeholder="Enter reason"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">From Date *</label>
+          <input [(ngModel)]="newLeave.fromDate" type="date"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">To Date *</label>
+          <input [(ngModel)]="newLeave.toDate" type="date"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-4">
+        <button (click)="applyLeave()" class="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">Submit</button>
+        <button (click)="showForm = false" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Pending Leaves (Admin/Manager) -->
+    <div *ngIf="role === 'Admin' || role === 'Manager'" class="bg-white rounded-xl shadow overflow-hidden mb-6">
+      <div class="px-6 py-4 border-b bg-yellow-50">
+        <h3 class="font-semibold text-yellow-700">Pending Approvals ({{ pendingLeaves.length }})</h3>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3 text-left">Employee</th>
+            <th class="px-4 py-3 text-left">Type</th>
+            <th class="px-4 py-3 text-left">Reason</th>
+            <th class="px-4 py-3 text-left">From</th>
+            <th class="px-4 py-3 text-left">To</th>
+            <th class="px-4 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of pendingLeaves" class="border-t hover:bg-gray-50">
+            <td class="px-4 py-3 font-medium">{{ l.employeeName }}</td>
+            <td class="px-4 py-3">{{ l.leaveType }}</td>
+            <td class="px-4 py-3 text-gray-500">{{ l.reason || '-' }}</td>
+            <td class="px-4 py-3">{{ l.fromDate | date:'mediumDate' }}</td>
+            <td class="px-4 py-3">{{ l.toDate | date:'mediumDate' }}</td>
+            <td class="px-4 py-3 flex gap-2">
+              <button (click)="approveLeave(l.leaveId, 'Approved')"
+                class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs hover:bg-green-200">Approve</button>
+              <button (click)="approveLeave(l.leaveId, 'Rejected')"
+                class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs hover:bg-red-200">Reject</button>
+            </td>
+          </tr>
+          <tr *ngIf="pendingLeaves.length === 0">
+            <td colspan="6" class="px-4 py-6 text-center text-gray-400">No pending leaves</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- My Leaves -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <div class="px-6 py-4 border-b">
+        <h3 class="font-semibold text-gray-700">My Leave History</h3>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3 text-left">Type</th>
+            <th class="px-4 py-3 text-left">Reason</th>
+            <th class="px-4 py-3 text-left">From</th>
+            <th class="px-4 py-3 text-left">To</th>
+            <th class="px-4 py-3 text-left">Status</th>
+            <th class="px-4 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of leaves" class="border-t hover:bg-gray-50">
+            <td class="px-4 py-3 font-medium">{{ l.leaveType }}</td>
+            <td class="px-4 py-3 text-gray-500">{{ l.reason || '-' }}</td>
+            <td class="px-4 py-3">{{ l.fromDate | date:'mediumDate' }}</td>
+            <td class="px-4 py-3">{{ l.toDate | date:'mediumDate' }}</td>
+            <td class="px-4 py-3">
+              <span [class]="l.status === 'Approved' ? 'bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs' :
+                             l.status === 'Rejected' ? 'bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs' :
+                             l.status === 'Cancelled' ? 'bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs' :
+                             'bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs'">
+                {{ l.status }}
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <button *ngIf="l.status === 'Pending'" (click)="cancelLeave(l.leaveId)"
+                class="text-red-500 hover:text-red-700 text-xs">Cancel</button>
+            </td>
+          </tr>
+          <tr *ngIf="leaves.length === 0">
+            <td colspan="6" class="px-4 py-8 text-center text-gray-400">No leave records</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

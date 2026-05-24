@@ -1,0 +1,88 @@
+<div class="min-h-screen bg-gray-100">
+  <nav class="bg-purple-700 text-white px-6 py-4 flex justify-between items-center shadow">
+    <div class="flex items-center gap-3">
+      <div class="bg-white text-purple-700 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">WMS</div>
+      <span class="font-semibold text-lg">Workforce Management System</span>
+      <span class="bg-purple-500 text-xs px-2 py-0.5 rounded-full">Employee</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-sm">Welcome, {{ username }}</span>
+      <button (click)="logout()" class="bg-white text-purple-700 px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-100">Logout</button>
+    </div>
+  </nav>
+
+  <div class="p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">My Dashboard</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div class="bg-white rounded-xl shadow p-5 border-l-4 border-green-500">
+        <p class="text-xs text-gray-500">Today's Status</p>
+        <p class="text-xl font-bold mt-1" [class]="todayAttendance ? 'text-green-600' : 'text-red-500'">
+          {{ todayAttendance ? (todayAttendance.checkOut ? 'Completed' : 'Checked In') : 'Not Checked In' }}
+        </p>
+        <p *ngIf="todayAttendance" class="text-xs text-gray-400 mt-1">
+          In: {{ todayAttendance.checkIn | date:'shortTime' }}
+          <span *ngIf="todayAttendance.checkOut"> | Out: {{ todayAttendance.checkOut | date:'shortTime' }}</span>
+        </p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5 border-l-4 border-yellow-500">
+        <p class="text-xs text-gray-500">Pending Leave Requests</p>
+        <p class="text-3xl font-bold text-yellow-600 mt-1">{{ pendingLeaves }}</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5 border-l-4 border-blue-500">
+        <p class="text-xs text-gray-500">My Projects</p>
+        <p class="text-3xl font-bold text-blue-600 mt-1">{{ myProjects.length }}</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Quick Access</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a routerLink="/attendance" class="bg-white rounded-xl shadow p-5 text-center hover:shadow-md transition cursor-pointer">
+            <div class="text-3xl mb-2">📋</div>
+            <p class="text-sm font-medium text-gray-700">My Attendance</p>
+            <p class="text-xs text-gray-400">Check in / out</p>
+          </a>
+          <a routerLink="/leaves" class="bg-white rounded-xl shadow p-5 text-center hover:shadow-md transition cursor-pointer">
+            <div class="text-3xl mb-2">📅</div>
+            <p class="text-sm font-medium text-gray-700">My Leaves</p>
+            <p class="text-xs text-gray-400">Apply for leave</p>
+          </a>
+          <a routerLink="/announcements" class="bg-white rounded-xl shadow p-5 text-center hover:shadow-md transition cursor-pointer col-span-2">
+            <div class="text-3xl mb-2">📢</div>
+            <p class="text-sm font-medium text-gray-700">Announcements</p>
+            <p class="text-xs text-gray-400">View company notices</p>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">My Projects</h3>
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+              <tr>
+                <th class="px-4 py-3 text-left">Project</th>
+                <th class="px-4 py-3 text-left">Status</th>
+                <th class="px-4 py-3 text-left">Assigned On</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of myProjects" class="border-t hover:bg-gray-50">
+                <td class="px-4 py-3 font-medium">{{ p.projectName }}</td>
+                <td class="px-4 py-3">
+                  <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">{{ p.status }}</span>
+                </td>
+                <td class="px-4 py-3 text-gray-500">{{ p.assignedOn | date:'mediumDate' }}</td>
+              </tr>
+              <tr *ngIf="myProjects.length === 0">
+                <td colspan="3" class="px-4 py-6 text-center text-gray-400">No projects assigned yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
