@@ -4,49 +4,36 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  buildConfiguration: 'Release'
-
 steps:
 
-# =========================
-# Install Node.js
-# =========================
+# Install Node.js 20
 - task: NodeTool@0
   inputs:
-    versionSpec: '18.x'
+    versionSpec: '20.x'
   displayName: 'Install Node.js'
 
-# =========================
 # Build Angular Frontend
-# =========================
 - script: |
-    cd frontend/wms-frontend
+    cd frontend
     npm install
     npm run build
   displayName: 'Build Angular Frontend'
 
-# =========================
 # Install .NET SDK
-# =========================
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
     version: '8.0.x'
   displayName: 'Install .NET SDK'
 
-# =========================
-# Restore Backend Dependencies
-# =========================
+# Restore backend dependencies
 - script: |
     cd backend
     dotnet restore
   displayName: 'Restore .NET Dependencies'
 
-# =========================
-# Build Backend
-# =========================
+# Build backend
 - script: |
     cd backend
-    dotnet build --configuration $(buildConfiguration)
+    dotnet build --configuration Release
   displayName: 'Build .NET Backend'
